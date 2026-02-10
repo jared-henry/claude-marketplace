@@ -4,15 +4,18 @@
     "name": "Jared Henry"
   },
   "metadata": {
-    "description": "Jared Henry's personal Claude marketplace",
-    "pluginRoot": "./experimental"
+    "description": "Jared Henry's personal Claude marketplace"
   },
   "plugins": [
     {
-      "name": "claude-marketplace",
-      "source": "./claude-marketplace",
-      "description": "Skill to instruct Claude to always reference the latest Anthropic documentation when editing a Claude marketplace repo",
-      "category": "experimental"
+      "name": "experimental",
+      "source": "./experimental",
+      "description": "Plugins in development or testing phase"
+    },
+    {
+      "name": "stable",
+      "source": "./stable",
+      "description": "Production-ready, fully tested plugins"
     }
   ]
 }

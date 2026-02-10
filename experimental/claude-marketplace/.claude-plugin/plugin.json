@@ -1,5 +1,0 @@
-{
-  "name": "claude-marketplace",
-  "description": "Skill to instruct Claude to always reference the latest Anthropic documentation when editing a Claude marketplace repo",
-  "version": "0.1.0"
-}
