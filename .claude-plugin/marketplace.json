@@ -1,0 +1,26 @@
+{
+  "name": "jared-henry-personal",
+  "owner": {
+    "name": "Jared Henry"
+  },
+  "metadata": {
+    "description": "Jared Henry's personal Claude marketplace"
+  },
+  "plugins": [
+    {
+      "name": "experimental",
+      "source": "./experimental",
+      "description": "Plugins in development or testing phase"
+    },
+    {
+      "name": "secret-squirrel",
+      "source": "./secret-squirrel",
+      "description": "Security skills for secrets scanning, OPSEC review, threat modeling, YubiKey setup, supply chain audit, repo hygiene, and dotfiles doctor"
+    },
+    {
+      "name": "stable",
+      "source": "./stable",
+      "description": "Production-ready, fully tested plugins"
+    }
+  ]
+}

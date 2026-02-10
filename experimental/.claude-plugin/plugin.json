@@ -1,0 +1,5 @@
+{
+  "name": "experimental",
+  "description": "Plugins in development or testing phase",
+  "version": "0.6.0"
+}
