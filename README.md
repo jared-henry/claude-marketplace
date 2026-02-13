@@ -94,5 +94,3 @@ Or browse available plugins:
 - [Plugin Marketplaces](https://code.claude.com/docs/en/plugin-marketplaces)
 - [Plugin Authoring](https://code.claude.com/docs/en/plugins)
 - [Plugin Reference](https://code.claude.com/docs/en/plugins-reference)
-
-# e2e test
