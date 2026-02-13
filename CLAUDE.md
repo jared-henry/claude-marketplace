@@ -29,8 +29,12 @@ claude-marketplace/
 │   ├── .claude-plugin/
 │   │   └── plugin.json           # Experimental plugin manifest
 │   └── skills/
-│       └── claude-marketplace/
-│           └── SKILL.md          # Skill: documentation reference
+│       ├── claude-marketplace/
+│       │   └── SKILL.md          # Skill: documentation reference
+│       ├── diagnose/
+│       │   └── SKILL.md          # Skill: Claude Code diagnostics
+│       └── mcp-configuration/
+│           └── SKILL.md          # Skill: MCP server configuration
 └── stable/
     └── .claude-plugin/
         └── plugin.json           # Stable plugin manifest (no skills yet)
@@ -50,7 +54,7 @@ The root marketplace configuration. Required fields: `name`, `owner`, `plugins`.
 
 Each plugin directory contains a manifest with required fields: `name`, `description`, `version`.
 
-- **experimental**: v0.1.0 - plugins under active development
+- **experimental**: v0.3.0 - plugins under active development
 - **stable**: v0.1.0 - production-ready plugins (currently empty, no skills yet)
 
 ### Skill Files (`skills/<skill-name>/SKILL.md`)
@@ -59,13 +63,17 @@ Skills are defined as Markdown files with YAML frontmatter. Required frontmatter
 
 Current skills:
 - `experimental/skills/claude-marketplace/SKILL.md` - References Anthropic docs when editing marketplace repos
+- `experimental/skills/diagnose/SKILL.md` - Diagnose Claude Code problems with root cause analysis, support ticket, and team message
+- `experimental/skills/mcp-configuration/SKILL.md` - Configure MCP servers using official Anthropic and provider documentation
 
 ## Architecture
 
 ```
 marketplace (jared-henry-personal)
-├── plugin: experimental (v0.1.0)
-│   └── skill: claude-marketplace
+├── plugin: experimental (v0.3.0)
+│   ├── skill: claude-marketplace
+│   ├── skill: diagnose
+│   └── skill: mcp-configuration
 └── plugin: stable (v0.1.0)
     └── (no skills yet)
 ```
