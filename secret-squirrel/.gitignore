@@ -1,3 +1,9 @@
 # Zero Trust: decrypted skill plaintext (only .enc files are committed)
 # Entries below are managed by the zero-trust skill
+skills/dotfiles-doctor/SKILL.md
+skills/opsec-review/SKILL.md
+skills/repo-hygiene/SKILL.md
+skills/secrets-scanner/SKILL.md
+skills/supply-chain-audit/SKILL.md
 skills/threat-model/SKILL.md
+skills/yubikey-setup/SKILL.md
