@@ -49,21 +49,21 @@ claude-marketplace/
 │   │   └── zero-trust.sh         # Crypto operations (unlock/lock/status)
 │   └── skills/
 │       ├── dotfiles-doctor/
-│       │   └── SKILL.md          # Skill: dotfiles setup audit
+│       │   └── SKILL.md.enc      # Skill: dotfiles setup audit (encrypted)
 │       ├── opsec-review/
-│       │   └── SKILL.md          # Skill: operational security review
+│       │   └── SKILL.md.enc      # Skill: operational security review (encrypted)
 │       ├── repo-hygiene/
-│       │   └── SKILL.md          # Skill: git history hygiene audit
+│       │   └── SKILL.md.enc      # Skill: git history hygiene audit (encrypted)
 │       ├── secrets-scanner/
-│       │   └── SKILL.md          # Skill: secrets detection
+│       │   └── SKILL.md.enc      # Skill: secrets detection (encrypted)
 │       ├── supply-chain-audit/
-│       │   └── SKILL.md          # Skill: supply chain security audit
+│       │   └── SKILL.md.enc      # Skill: supply chain security audit (encrypted)
 │       ├── threat-model/
-│       │   └── SKILL.md          # Skill: STRIDE threat modeling
+│       │   └── SKILL.md.enc      # Skill: STRIDE threat modeling (encrypted)
 │       ├── yubikey-setup/
-│       │   └── SKILL.md          # Skill: YubiKey registration wizard
+│       │   └── SKILL.md.enc      # Skill: YubiKey registration wizard (encrypted)
 │       └── zero-trust/
-│           └── SKILL.md          # Skill: YubiKey-encrypted skill trees
+│           └── SKILL.md          # Skill: YubiKey-encrypted skill trees (plaintext)
 └── stable/
     └── .claude-plugin/
         └── plugin.json           # Stable plugin manifest (no skills yet)
@@ -114,7 +114,7 @@ Each plugin directory contains a manifest. The manifest is optional — if omitt
 
 Current plugins:
 - **experimental**: v0.6.0 - plugins under active development
-- **secret-squirrel**: v0.3.0 - security skills (secrets scanning, OPSEC review, threat modeling, YubiKey setup, supply chain audit, repo hygiene, dotfiles doctor, zero-trust encryption)
+- **secret-squirrel**: v0.4.0 - security skills (secrets scanning, OPSEC review, threat modeling, YubiKey setup, supply chain audit, repo hygiene, dotfiles doctor, zero-trust encryption). All skills except zero-trust are encrypted at rest.
 - **stable**: v0.1.0 - production-ready plugins (currently empty, no skills yet)
 
 ### Skill Files (`skills/<skill-name>/SKILL.md`)
@@ -137,7 +137,7 @@ Current skills:
 - `secret-squirrel/skills/supply-chain-audit/SKILL.md` - Audit shell scripts and CI/CD pipelines for unpinned downloads and unverified signatures
 - `secret-squirrel/skills/threat-model/SKILL.md` - STRIDE threat modeling walkthrough for systems and features
 - `secret-squirrel/skills/yubikey-setup/SKILL.md` - Walk through registering a new YubiKey for SSH auth and git commit signing
-- `secret-squirrel/skills/zero-trust/SKILL.md` - Encrypt/decrypt skill trees using YubiKey HMAC-SHA1 + age
+- `secret-squirrel/skills/zero-trust/SKILL.md` - Encrypt/decrypt skill trees using YubiKey HMAC-SHA1 + OpenSSL AES-256-CBC
 
 ## Architecture
 
@@ -148,7 +148,7 @@ marketplace (jared-henry-personal)
 │   ├── skill: claude-marketplace
 │   ├── skill: diagnose
 │   └── skill: mcp-configuration
-├── plugin: secret-squirrel (v0.3.0)
+├── plugin: secret-squirrel (v0.4.0)
 │   ├── skill: dotfiles-doctor
 │   ├── skill: opsec-review
 │   ├── skill: repo-hygiene
