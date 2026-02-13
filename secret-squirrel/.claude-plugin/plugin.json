@@ -1,5 +1,5 @@
 {
   "name": "secret-squirrel",
   "description": "Security skills for secrets scanning, OPSEC review, threat modeling, YubiKey setup, supply chain audit, repo hygiene, dotfiles doctor, and zero-trust skill encryption",
-  "version": "0.3.0"
+  "version": "0.4.0"
 }
