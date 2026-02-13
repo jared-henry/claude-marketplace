@@ -2,13 +2,15 @@
 
 ## Instructions for Claude AI
 
-When editing this repository, **always reference the latest Anthropic documentation** for plugin marketplaces before making changes:
+**IMPORTANT: Before making ANY changes to files in this repository, you MUST invoke the `claude-marketplace` skill first.** Run `/claude-marketplace` (or use the Skill tool to invoke `claude-marketplace`) at the start of every editing task. This skill fetches the latest Anthropic plugin marketplace documentation and ensures all changes comply with the current spec. Do not skip this step, even for minor edits.
+
+Reference documentation:
 
 - **Plugin Marketplaces:** https://code.claude.com/docs/en/plugin-marketplaces
 - **Plugin Authoring:** https://code.claude.com/docs/en/plugins
 - **Plugin Reference:** https://code.claude.com/docs/en/plugins-reference
 
-Fetch the live documentation using `WebFetch` before making structural changes. Do not rely on cached or outdated knowledge of the marketplace format.
+Do not rely on cached or outdated knowledge of the marketplace format.
 
 ## Repository Overview
 
