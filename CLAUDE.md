@@ -2,34 +2,167 @@
 
 ## Instructions for Claude AI
 
-When editing this repository, **always reference the latest Anthropic documentation** for plugin marketplaces:
+When editing this repository, **always reference the latest Anthropic documentation** for plugin marketplaces before making changes:
 
-**Documentation URL:** https://code.claude.com/docs/en/plugin-marketplaces
+- **Plugin Marketplaces:** https://code.claude.com/docs/en/plugin-marketplaces
+- **Plugin Authoring:** https://code.claude.com/docs/en/plugins
+- **Plugin Reference:** https://code.claude.com/docs/en/plugins-reference
 
-## Repository Context
+Fetch the live documentation using `WebFetch` before making structural changes. Do not rely on cached or outdated knowledge of the marketplace format.
 
-This is a Claude marketplace repository that contains plugins for Claude AI. The marketplace includes:
+## Repository Overview
 
-- **experimental**: Plugins that are in development or testing phase
-- **stable**: Plugins that are production-ready and have been thoroughly tested
+This is **jared-henry-personal**, a Claude Code plugin marketplace owned by Jared Henry. It hosts Claude plugins organized into two maturity tiers: **experimental** (in development) and **stable** (production-ready).
 
-## Guidelines
+The marketplace is configuration-driven with no runtime code. It uses JSON manifests and Markdown skill files following the Anthropic plugin marketplace specification.
 
-When making changes to this repository:
+## Directory Structure
 
-1. **Consult the Documentation**: Always refer to the official Anthropic plugin marketplace documentation at the URL above for the latest standards, best practices, and requirements
-2. **Follow Plugin Standards**: Ensure all plugins conform to the specifications outlined in the Anthropic documentation
-3. **Maintain Plugin Categories**: Keep the distinction between experimental and stable plugins clear
-4. **Stay Updated**: The documentation may be updated frequently, so always check for the latest version when making changes
+```
+claude-marketplace/
+├── .claude-plugin/
+│   └── marketplace.json          # Root marketplace manifest
+├── .gitignore
+├── CLAUDE.md                     # This file - AI assistant instructions
+├── README.md                     # Project introduction
+├── experimental/
+│   ├── .claude-plugin/
+│   │   └── plugin.json           # Experimental plugin manifest
+│   └── skills/
+│       └── claude-marketplace/
+│           └── SKILL.md          # Skill: documentation reference
+└── stable/
+    └── .claude-plugin/
+        └── plugin.json           # Stable plugin manifest (no skills yet)
+```
 
-## Plugin Types
+## Key Files
 
-### Experimental Plugins
-- Plugins under active development
-- May have incomplete features or known issues
-- Used for testing and gathering feedback
+### Marketplace Manifest (`.claude-plugin/marketplace.json`)
 
-### Stable Plugins
-- Production-ready plugins
-- Fully tested and documented
-- Suitable for general use
+The root marketplace configuration. Required fields: `name`, `owner`, `plugins`.
+
+- **name**: `jared-henry-personal` (kebab-case identifier users see when installing)
+- **owner**: `Jared Henry`
+- **plugins**: References `./experimental` and `./stable` via relative paths
+
+### Plugin Manifests (`<plugin>/.claude-plugin/plugin.json`)
+
+Each plugin directory contains a manifest with required fields: `name`, `description`, `version`.
+
+- **experimental**: v0.1.0 - plugins under active development
+- **stable**: v0.1.0 - production-ready plugins (currently empty, no skills yet)
+
+### Skill Files (`skills/<skill-name>/SKILL.md`)
+
+Skills are defined as Markdown files with YAML frontmatter. Required frontmatter field: `description`.
+
+Current skills:
+- `experimental/skills/claude-marketplace/SKILL.md` - References Anthropic docs when editing marketplace repos
+
+## Architecture
+
+```
+marketplace (jared-henry-personal)
+├── plugin: experimental (v0.1.0)
+│   └── skill: claude-marketplace
+└── plugin: stable (v0.1.0)
+    └── (no skills yet)
+```
+
+The hierarchy is: **Marketplace** -> **Plugins** -> **Skills/Hooks/Agents/MCP Servers**
+
+Plugins are referenced from `marketplace.json` via relative `source` paths. Each plugin is self-contained in its own directory with its own `.claude-plugin/plugin.json` manifest.
+
+## Naming Conventions
+
+- **Marketplace name**: kebab-case (e.g., `jared-henry-personal`)
+- **Plugin names**: kebab-case, lowercase (e.g., `experimental`, `stable`)
+- **Skill directories**: kebab-case (e.g., `claude-marketplace`)
+- **Versioning**: Semantic versioning (e.g., `0.1.0`, `1.0.0`)
+
+## Development Workflow
+
+### Adding a New Skill
+
+1. Choose the target plugin (`experimental/` for development, `stable/` for production-ready)
+2. Create the skill directory: `<plugin>/skills/<skill-name>/`
+3. Create `SKILL.md` with YAML frontmatter:
+   ```markdown
+   ---
+   description: Brief description of what the skill does
+   disable-model-invocation: true
+   ---
+
+   Skill instructions here.
+   ```
+4. Update the plugin's `plugin.json` version if appropriate
+5. Validate with `claude plugin validate .` or `/plugin validate .`
+
+### Adding a New Plugin
+
+1. Create the plugin directory at the repository root (e.g., `my-plugin/`)
+2. Create `.claude-plugin/plugin.json` inside it:
+   ```json
+   {
+     "name": "my-plugin",
+     "description": "What this plugin does",
+     "version": "1.0.0"
+   }
+   ```
+3. Add a plugin entry to `.claude-plugin/marketplace.json` under `plugins`:
+   ```json
+   {
+     "name": "my-plugin",
+     "source": "./my-plugin",
+     "description": "What this plugin does"
+   }
+   ```
+4. Add skills, hooks, agents, or MCP servers inside the plugin directory
+5. Validate the marketplace
+
+### Promoting a Skill from Experimental to Stable
+
+1. Move the skill directory from `experimental/skills/<name>/` to `stable/skills/<name>/`
+2. Update version numbers in both plugin manifests
+3. Validate the marketplace
+
+### Validation
+
+Always validate before committing structural changes:
+
+```bash
+claude plugin validate .
+```
+
+Or from within Claude Code:
+```
+/plugin validate .
+```
+
+## Plugin Capabilities
+
+Plugins can contain any combination of:
+
+- **Skills** (`skills/<name>/SKILL.md`) - Slash commands users can invoke
+- **Hooks** - Shell commands triggered by Claude Code events (e.g., `PostToolUse`)
+- **Agents** - Custom agent definitions
+- **MCP Servers** - Model Context Protocol server configurations
+- **LSP Servers** - Language Server Protocol configurations
+
+Use `${CLAUDE_PLUGIN_ROOT}` in hooks and server configs to reference files within the plugin's installed directory.
+
+## Guidelines for AI Assistants
+
+1. **Fetch live documentation** before making structural changes to marketplace or plugin manifests
+2. **Follow the marketplace schema** exactly as defined in the Anthropic documentation
+3. **Maintain the experimental/stable distinction** - do not mix maturity levels
+4. **Use kebab-case** for all identifiers (marketplace names, plugin names, skill directories)
+5. **Keep plugins self-contained** - do not reference files outside a plugin's directory with `../` paths (plugins are copied to a cache on install, so external references break)
+6. **Validate changes** before committing using `claude plugin validate .`
+7. **Preserve existing structure** - do not reorganize without explicit request
+8. **Bump versions** when making meaningful changes to plugin contents
+
+## No Build System
+
+This repository has no build tools, package managers, test frameworks, or CI/CD pipelines. It is purely configuration and documentation. Changes are validated via the Claude plugin validation command.
