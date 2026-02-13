@@ -23,6 +23,11 @@ claude-marketplace/
 ├── secret-squirrel/
 │   ├── .claude-plugin/
 │   │   └── plugin.json           # Secret Squirrel plugin manifest
+│   ├── .gitignore                # Prevents committing decrypted skill plaintext
+│   ├── hooks/
+│   │   └── hooks.json            # SessionStart/End hooks for auto-decrypt/lock
+│   ├── scripts/
+│   │   └── zero-trust.sh         # Crypto operations (unlock/lock/status)
 │   └── skills/
 │       ├── dotfiles-doctor/
 │       │   └── SKILL.md          # Skill: dotfiles setup audit
@@ -36,15 +41,17 @@ claude-marketplace/
 │       │   └── SKILL.md          # Skill: supply chain security audit
 │       ├── threat-model/
 │       │   └── SKILL.md          # Skill: STRIDE threat modeling
-│       └── yubikey-setup/
-│           └── SKILL.md          # Skill: YubiKey registration wizard
+│       ├── yubikey-setup/
+│       │   └── SKILL.md          # Skill: YubiKey registration wizard
+│       └── zero-trust/
+│           └── SKILL.md          # Skill: YubiKey-encrypted skill trees
 └── stable/
     └── .claude-plugin/
         └── plugin.json           # Stable plugin manifest (no skills yet)
 ```
 
 - **`/experimental`** - Plugins under active development (v0.6.0)
-- **`/secret-squirrel`** - Security skills: scanning, OPSEC, threat modeling, supply chain, repo hygiene, dotfiles audit, YubiKey setup (v0.2.0)
+- **`/secret-squirrel`** - Security skills: scanning, OPSEC, threat modeling, supply chain, repo hygiene, dotfiles audit, YubiKey setup, zero-trust encryption (v0.3.0)
 - **`/stable`** - Production-ready, fully tested plugins (v0.1.0, no skills yet)
 
 ## Plugins
@@ -52,7 +59,7 @@ claude-marketplace/
 | Plugin | Version | Description | Contents |
 |--------|---------|-------------|----------|
 | experimental | 0.6.0 | Plugins in development or testing phase | **Skills:** `bootstrap-test` - Test bootstrap scripts in Docker for correctness and idempotency, `claude-marketplace` - References latest Anthropic docs when editing marketplace repos, `diagnose` - Diagnose Claude Code problems with root cause analysis, `mcp-configuration` - Configure MCP servers using official + provider docs |
-| secret-squirrel | 0.2.0 | Security skills — spy-themed security practices | **Skills:** `dotfiles-doctor` - Audit dotfiles for broken symlinks, permission issues, and config gotchas, `opsec-review` - Review code/configs for operational security issues, `repo-hygiene` - Audit git history for leaked secrets, unsigned commits, and large blobs, `secrets-scanner` - Scan repos for leaked credentials and sensitive data, `supply-chain-audit` - Audit scripts for unpinned downloads and unverified signatures, `threat-model` - STRIDE threat modeling walkthrough, `yubikey-setup` - YubiKey registration wizard for SSH auth and git signing |
+| secret-squirrel | 0.3.0 | Security skills — spy-themed security practices | **Skills:** `dotfiles-doctor` - Audit dotfiles for broken symlinks, permission issues, and config gotchas, `opsec-review` - Review code/configs for operational security issues, `repo-hygiene` - Audit git history for leaked secrets, unsigned commits, and large blobs, `secrets-scanner` - Scan repos for leaked credentials and sensitive data, `supply-chain-audit` - Audit scripts for unpinned downloads and unverified signatures, `threat-model` - STRIDE threat modeling walkthrough, `yubikey-setup` - YubiKey registration wizard for SSH auth and git signing, `zero-trust` - Encrypt skill trees using YubiKey HMAC-SHA1 + age. **Hooks:** SessionStart auto-decrypt, SessionEnd auto-lock |
 | stable | 0.1.0 | Production-ready, fully tested plugins | *(no skills yet)* |
 
 ## Installation

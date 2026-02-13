@@ -15,7 +15,7 @@
     {
       "name": "secret-squirrel",
       "source": "./secret-squirrel",
-      "description": "Security skills for secrets scanning, OPSEC review, threat modeling, YubiKey setup, supply chain audit, repo hygiene, and dotfiles doctor"
+      "description": "Security skills for secrets scanning, OPSEC review, threat modeling, YubiKey setup, supply chain audit, repo hygiene, dotfiles doctor, and zero-trust skill encryption"
     },
     {
       "name": "stable",

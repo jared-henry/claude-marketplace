@@ -1,0 +1,3 @@
+# Zero Trust: decrypted skill plaintext (only .enc files are committed)
+# Entries below are managed by the zero-trust skill
+skills/threat-model/SKILL.md

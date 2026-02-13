@@ -1,0 +1,27 @@
+{
+  "description": "Zero Trust: auto-decrypt encrypted skills on session start, lock on session end",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/zero-trust.sh unlock",
+            "timeout": 30,
+            "statusMessage": "Unlocking encrypted skills..."
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/zero-trust.sh lock"
+          }
+        ]
+      }
+    ]
+  }
+}
