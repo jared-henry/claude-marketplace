@@ -44,22 +44,56 @@ claude-marketplace/
 
 ### Marketplace Manifest (`.claude-plugin/marketplace.json`)
 
-The root marketplace configuration. Required fields: `name`, `owner`, `plugins`.
+The root marketplace configuration.
 
-- **name**: `jared-henry-personal` (kebab-case identifier users see when installing)
-- **owner**: `Jared Henry`
-- **plugins**: References `./experimental` and `./stable` via relative paths
+**Required fields:** `name`, `owner`, `plugins`
+
+- **name**: `jared-henry-personal` (kebab-case identifier users see when installing, e.g., `/plugin install my-tool@jared-henry-personal`)
+- **owner**: Object with required `name` field and optional `email` field (e.g., `{ "name": "Jared Henry" }`)
+- **plugins**: Array of plugin entries, each requiring `name` and `source` fields
+
+**Optional metadata fields:** `metadata.description`, `metadata.version`, `metadata.pluginRoot`
+
+- **metadata.description**: `"Jared Henry's personal Claude marketplace"` - brief marketplace description
+- **metadata.version**: Marketplace version string
+- **metadata.pluginRoot**: Base directory prepended to relative plugin source paths (e.g., `"./plugins"` lets you write `"source": "formatter"` instead of `"source": "./plugins/formatter"`)
+
+**Reserved names:** The following marketplace names are reserved for official Anthropic use: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `life-sciences`. Names that impersonate official marketplaces are also blocked.
+
+### Plugin Entries in `marketplace.json`
+
+Each entry in the `plugins` array describes a plugin and where to find it.
+
+**Required fields:** `name`, `source`
+
+- **name**: Plugin identifier (kebab-case, no spaces). Users see this when installing (e.g., `/plugin install experimental@jared-henry-personal`).
+- **source**: Where to fetch the plugin from. Can be a relative path string (e.g., `"./experimental"`), a GitHub object (`{ "source": "github", "repo": "owner/repo" }`), or a git URL object (`{ "source": "url", "url": "https://..." }`).
+
+**Optional fields:** `description`, `version`, `author`, `homepage`, `repository`, `license`, `keywords`, `category`, `tags`, `strict`, and component configuration fields (`commands`, `agents`, `hooks`, `mcpServers`, `lspServers`)
+
+- **strict**: When `true` (default), marketplace component fields merge with `plugin.json`. When `false`, the marketplace entry defines the plugin entirely and `plugin.json` must not also declare components.
 
 ### Plugin Manifests (`<plugin>/.claude-plugin/plugin.json`)
 
-Each plugin directory contains a manifest with required fields: `name`, `description`, `version`.
+Each plugin directory contains a manifest. The manifest is optional — if omitted, Claude Code auto-discovers components in default locations and derives the plugin name from the directory name.
 
+**Required field (if manifest is present):** `name`
+
+**Optional metadata fields:** `description`, `version`, `author`, `homepage`, `repository`, `license`, `keywords`
+
+**Optional component path fields:** `commands`, `agents`, `skills`, `hooks`, `mcpServers`, `outputStyles`, `lspServers`
+
+Current plugins:
 - **experimental**: v0.3.0 - plugins under active development
 - **stable**: v0.1.0 - production-ready plugins (currently empty, no skills yet)
 
 ### Skill Files (`skills/<skill-name>/SKILL.md`)
 
-Skills are defined as Markdown files with YAML frontmatter. Required frontmatter field: `description`.
+Skills are agent-invokable extensions defined as Markdown files with YAML frontmatter. Claude automatically uses skills based on task context.
+
+**Required frontmatter field:** `description`
+
+**Optional frontmatter fields:** `disable-model-invocation`, `argument-hint`, `allowed-tools`
 
 Current skills:
 - `experimental/skills/claude-marketplace/SKILL.md` - References Anthropic docs when editing marketplace repos
@@ -78,16 +112,16 @@ marketplace (jared-henry-personal)
     └── (no skills yet)
 ```
 
-The hierarchy is: **Marketplace** -> **Plugins** -> **Skills/Hooks/Agents/MCP Servers**
+The hierarchy is: **Marketplace** -> **Plugins** -> **Skills/Commands/Hooks/Agents/MCP Servers/LSP Servers**
 
-Plugins are referenced from `marketplace.json` via relative `source` paths. Each plugin is self-contained in its own directory with its own `.claude-plugin/plugin.json` manifest.
+Plugins are referenced from `marketplace.json` via relative `source` paths. Each plugin is self-contained in its own directory with its own `.claude-plugin/plugin.json` manifest. When users install a plugin, Claude Code copies the plugin directory to a cache location — plugins cannot reference files outside their directory using `../` paths.
 
 ## Naming Conventions
 
 - **Marketplace name**: kebab-case (e.g., `jared-henry-personal`)
 - **Plugin names**: kebab-case, lowercase (e.g., `experimental`, `stable`)
 - **Skill directories**: kebab-case (e.g., `claude-marketplace`)
-- **Versioning**: Semantic versioning (e.g., `0.1.0`, `1.0.0`)
+- **Versioning**: Semantic versioning `MAJOR.MINOR.PATCH` (e.g., `0.1.0`, `1.0.0`)
 
 ## Development Workflow
 
@@ -107,10 +141,25 @@ Plugins are referenced from `marketplace.json` via relative `source` paths. Each
 4. Update the plugin's `plugin.json` version if appropriate
 5. Validate with `claude plugin validate .` or `/plugin validate .`
 
+### Adding a New Command (User-Invocable Slash Command)
+
+1. Choose the target plugin
+2. Create the commands directory if it doesn't exist: `<plugin>/commands/`
+3. Create a Markdown file: `<plugin>/commands/<command-name>.md`
+   ```markdown
+   ---
+   description: Brief description of what the command does
+   ---
+
+   Command instructions here. Use $ARGUMENTS for user input.
+   ```
+4. The command is invoked as `/<plugin-name>:<command-name>`
+5. Validate with `claude plugin validate .`
+
 ### Adding a New Plugin
 
 1. Create the plugin directory at the repository root (e.g., `my-plugin/`)
-2. Create `.claude-plugin/plugin.json` inside it:
+2. Create `.claude-plugin/plugin.json` inside it (only `name` is required):
    ```json
    {
      "name": "my-plugin",
@@ -118,7 +167,7 @@ Plugins are referenced from `marketplace.json` via relative `source` paths. Each
      "version": "1.0.0"
    }
    ```
-3. Add a plugin entry to `.claude-plugin/marketplace.json` under `plugins`:
+3. Add a plugin entry to `.claude-plugin/marketplace.json` under `plugins` (`name` and `source` are required):
    ```json
    {
      "name": "my-plugin",
@@ -126,7 +175,7 @@ Plugins are referenced from `marketplace.json` via relative `source` paths. Each
      "description": "What this plugin does"
    }
    ```
-4. Add skills, hooks, agents, or MCP servers inside the plugin directory
+4. Add skills, commands, hooks, agents, MCP servers, or LSP servers inside the plugin directory
 5. Validate the marketplace
 
 ### Promoting a Skill from Experimental to Stable
@@ -150,15 +199,27 @@ Or from within Claude Code:
 
 ## Plugin Capabilities
 
-Plugins can contain any combination of:
+Plugins can contain any combination of these components. Only `plugin.json` goes inside `.claude-plugin/`. All other directories must be at the plugin root level.
 
-- **Skills** (`skills/<name>/SKILL.md`) - Slash commands users can invoke
-- **Hooks** - Shell commands triggered by Claude Code events (e.g., `PostToolUse`)
-- **Agents** - Custom agent definitions
-- **MCP Servers** - Model Context Protocol server configurations
-- **LSP Servers** - Language Server Protocol configurations
+| Component         | Default Location             | Description                                                      |
+|-------------------|------------------------------|------------------------------------------------------------------|
+| **Skills**        | `skills/<name>/SKILL.md`     | Agent-invocable skills — Claude uses them based on task context   |
+| **Commands**      | `commands/<name>.md`         | User-invocable slash commands (`/<plugin>:<command>`)             |
+| **Agents**        | `agents/<name>.md`           | Custom subagent definitions                                      |
+| **Hooks**         | `hooks/hooks.json`           | Event handlers triggered by Claude Code events                   |
+| **MCP Servers**   | `.mcp.json`                  | Model Context Protocol server configurations                     |
+| **LSP Servers**   | `.lsp.json`                  | Language Server Protocol configurations for code intelligence    |
+| **Output Styles** | `outputStyles/`              | Custom output style files                                        |
 
-Use `${CLAUDE_PLUGIN_ROOT}` in hooks and server configs to reference files within the plugin's installed directory.
+### Hooks
+
+Hooks respond to Claude Code events. Three hook types are available: `command` (shell commands), `prompt` (LLM evaluation), and `agent` (agentic verifier with tools).
+
+Available hook events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `UserPromptSubmit`, `Notification`, `Stop`, `SubagentStart`, `SubagentStop`, `SessionStart`, `SessionEnd`, `TeammateIdle`, `TaskCompleted`, `PreCompact`
+
+### Environment Variable
+
+Use `${CLAUDE_PLUGIN_ROOT}` in hooks, MCP server configs, and scripts to reference files within the plugin's installed directory. This is necessary because plugins are copied to a cache location when installed.
 
 ## Guidelines for AI Assistants
 
@@ -166,10 +227,11 @@ Use `${CLAUDE_PLUGIN_ROOT}` in hooks and server configs to reference files withi
 2. **Follow the marketplace schema** exactly as defined in the Anthropic documentation
 3. **Maintain the experimental/stable distinction** - do not mix maturity levels
 4. **Use kebab-case** for all identifiers (marketplace names, plugin names, skill directories)
-5. **Keep plugins self-contained** - do not reference files outside a plugin's directory with `../` paths (plugins are copied to a cache on install, so external references break)
+5. **Keep plugins self-contained** - do not reference files outside a plugin's directory with `../` paths (plugins are copied to a cache on install, so external references break; use symlinks if shared files are needed)
 6. **Validate changes** before committing using `claude plugin validate .`
 7. **Preserve existing structure** - do not reorganize without explicit request
 8. **Bump versions** when making meaningful changes to plugin contents
+9. **Put components at the plugin root** - only `plugin.json` goes inside `.claude-plugin/`; all other directories (`commands/`, `skills/`, `agents/`, `hooks/`) must be at the plugin root level
 
 ## No Build System
 
