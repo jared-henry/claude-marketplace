@@ -12,21 +12,25 @@ claude-marketplace/
 │   ├── .claude-plugin/
 │   │   └── plugin.json           # Experimental plugin manifest
 │   └── skills/
-│       └── claude-marketplace/
-│           └── SKILL.md          # Skill: documentation reference
+│       ├── claude-marketplace/
+│       │   └── SKILL.md          # Skill: documentation reference
+│       ├── diagnose/
+│       │   └── SKILL.md          # Skill: Claude Code diagnostics
+│       └── mcp-configuration/
+│           └── SKILL.md          # Skill: MCP server configuration
 └── stable/
     └── .claude-plugin/
         └── plugin.json           # Stable plugin manifest (no skills yet)
 ```
 
-- **`/experimental`** - Plugins under active development (v0.1.0)
+- **`/experimental`** - Plugins under active development (v0.3.0)
 - **`/stable`** - Production-ready, fully tested plugins (v0.1.0, no skills yet)
 
 ## Plugins
 
 | Plugin | Version | Description | Contents |
 |--------|---------|-------------|----------|
-| experimental | 0.1.0 | Plugins in development or testing phase | **Skill:** `claude-marketplace` - References latest Anthropic docs when editing marketplace repos |
+| experimental | 0.3.0 | Plugins in development or testing phase | **Skills:** `claude-marketplace` - References latest Anthropic docs when editing marketplace repos, `diagnose` - Diagnose Claude Code problems with root cause analysis, `mcp-configuration` - Configure MCP servers using official + provider docs |
 | stable | 0.1.0 | Production-ready, fully tested plugins | *(no skills yet)* |
 
 ## Installation
